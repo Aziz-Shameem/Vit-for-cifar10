@@ -17,6 +17,7 @@ import numpy as np
 
 import torchvision
 import torchvision.transforms as transforms
+from tqdm.notebook import tqdm
 
 import os
 import argparse
@@ -271,9 +272,10 @@ def train(epoch):
         total += targets.size(0)
         correct += predicted.eq(targets).sum().item()
 
-        progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-            % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
-    return train_loss/(batch_idx+1)
+        # progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
+        #     % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
+        tqdm.write(f'Loss : {train_loss/(batch_idx+1}')
+    return train_loss/(batch_idx+1), correct
 
 ##### Validation
 def test(epoch):
@@ -322,12 +324,16 @@ if usewandb:
     wandb.watch(net)
     
 net.cuda()
-for epoch in range(start_epoch, args.n_epochs):
-    start = time.time()
-    trainloss = train(epoch)
+pbar = tqdm(range(start_epoch, args.n_epochs))
+for epoch in pbar:
+    pbar.set_description(f'El Time : {pbar.format_dict["elapsed"]}')
+    # start = time.time()
+    trainloss, train_acc = train(epoch)
     val_loss, acc = test(epoch)
+
+    tqdm.write(f'Train Loss {trainloss:.4f} | Train Acc {train_acc:.3f} | Val Loss {val_loss:.4f} | Val Acc {acc:.3f}')
     
-    scheduler.step(epoch-1) # step cosine scheduling
+    # scheduler.step(epoch-1) # step cosine scheduling
     
     list_loss.append(val_loss)
     list_acc.append(acc)

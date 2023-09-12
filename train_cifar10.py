@@ -251,7 +251,7 @@ elif args.opt == "sgd":
 ##### Training
 scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
 def train(epoch):
-    tqdm.write('\nEpoch: %d' % epoch)
+    tqdm.write('Epoch: %d' % epoch)
     net.train()
     train_loss = 0
     correct = 0
@@ -274,7 +274,7 @@ def train(epoch):
 
         # progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
         #     % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
-    return train_loss/(batch_idx+1), correct
+    return train_loss/(batch_idx+1), 100.*correct/total
 
 ##### Validation
 def test(epoch):
@@ -314,7 +314,7 @@ def test(epoch):
     tqdm.write(content)
     with open(f'log/log_{args.net}_patch{args.patch}.txt', 'a') as appender:
         appender.write(content + "\n")
-    return test_loss, acc
+    return test_loss/(batch_idx+1), acc
 
 list_loss = []
 list_acc = []

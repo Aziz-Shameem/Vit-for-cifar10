@@ -17,7 +17,7 @@ import numpy as np
 
 import torchvision
 import torchvision.transforms as transforms
-from tqdm.notebook import tqdm
+from tqdm.auto import tqdm
 
 import os
 import argparse
@@ -26,7 +26,7 @@ import csv
 import time
 
 from models import *
-from utils import progress_bar
+# from utils import progress_bar
 from randomaug import RandAugment
 from models.vit import ViT
 from models.convmixer import ConvMixer
@@ -224,7 +224,7 @@ elif args.net=="swin":
 # For Multi-GPU
 if 'cuda' in device:
     print(device)
-    print("using data parallel")
+    print("using data parallel -- changed code")
     net = torch.nn.DataParallel(net) # make parallel
     cudnn.benchmark = True
 
@@ -246,7 +246,7 @@ elif args.opt == "sgd":
     optimizer = optim.SGD(net.parameters(), lr=args.lr)  
     
 # use cosine scheduling
-scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.n_epochs)
+# scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.n_epochs)
 
 ##### Training
 scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
@@ -294,8 +294,8 @@ def test(epoch):
             total += targets.size(0)
             correct += predicted.eq(targets).sum().item()
 
-            progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-                % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
+            # progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
+            #     % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
     
     # Save checkpoint.
     acc = 100.*correct/total

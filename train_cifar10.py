@@ -251,7 +251,7 @@ elif args.opt == "sgd":
 ##### Training
 scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
 def train(epoch):
-    print('\nEpoch: %d' % epoch)
+    tqdm.write('\nEpoch: %d' % epoch)
     net.train()
     train_loss = 0
     correct = 0
@@ -300,7 +300,7 @@ def test(epoch):
     # Save checkpoint.
     acc = 100.*correct/total
     if acc > best_acc:
-        print('Saving..')
+        tqdm.write('Saving..')
         state = {"model": net.state_dict(),
               "optimizer": optimizer.state_dict(),
               "scaler": scaler.state_dict()}
@@ -311,7 +311,7 @@ def test(epoch):
     
     os.makedirs("log", exist_ok=True)
     content = time.ctime() + ' ' + f'Epoch {epoch}, lr: {optimizer.param_groups[0]["lr"]:.7f}, val loss: {test_loss:.5f}, acc: {(acc):.5f}'
-    print(content)
+    tqdm.write(content)
     with open(f'log/log_{args.net}_patch{args.patch}.txt', 'a') as appender:
         appender.write(content + "\n")
     return test_loss, acc
